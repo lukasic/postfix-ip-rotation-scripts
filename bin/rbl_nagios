@@ -1,0 +1,21 @@
+#!/bin/sh
+UNLISTED=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | grep '^0$' -c`
+LISTED=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | grep '^0$' -vc`
+TOTALLIST=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | awk '{s+=$1}END{print s}'`
+
+STATE=10
+if [ $UNLISTED -lt 6 ]; then
+	STATE=2
+	echo "RBL CRITICAL,less than 6 IP's not blacklisted, OK:$UNLISTED LISTED:$LISTED TOTAL LISTINGS: $TOTALLIST"
+	echo "$LISTED $STATE" > /tmp/listed.txt
+	exit $STATE
+elif [ $UNLISTED -lt 12 ] || [ $STATE -eq 1 ]; then
+	echo "RBL WARNING, OK:$UNLISTED LISTED:$LISTED TOTAL LISTINGS: $TOTALLIST"
+	STATE=1
+	echo "$LISTED $STATE" > /tmp/listed.txt
+	exit $STATE
+else
+	echo "RBL OK, OK:$UNLISTED LISTED:$LISTED TOTAL LISTINGS: $TOTALLIST"
+	echo "$LISTED $STATE" > /tmp/listed.txt
+	exit 0
+fi

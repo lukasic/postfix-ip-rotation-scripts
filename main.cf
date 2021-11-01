@@ -1,0 +1,15 @@
+config_directory = /etc/postfix
+myhostname = smtp-x.example.com
+mydestination =
+smtpd_use_tls = yes
+
+#vyber IP pro rotaci
+transport_maps = hash:/etc/postfix/transport_maps
+
+inet_protocols = ipv4, ipv6
+bounce_queue_lifetime = 23h
+maximal_queue_lifetime = 1d
+smtp_mx_address_limit = 15
+
+message_size_limit = 51200000
+

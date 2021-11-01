@@ -1,0 +1,8 @@
+#!/bin/bash
+IP=$1
+URL="https://ers.trendmicro.com/reputations/index?ip_address=$IP"
+if wget -q -O - "$URL" | grep -q 'Request to be removed from the global blocked list' ; then
+	echo 'listed in ers.trendmicro.com'
+else
+	echo 'not listed in ers.trendmicro.com'
+fi

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ "$1" = "config" ]; then
+	echo 'graph_title RBL listing of SMTPOUT adresses'
+	echo "graph_args --base 1000 -r --lower-limit 0"
+	echo 'graph_scale no'
+	echo 'graph_info This graph shows how much IP adressses of SMTPOUT are on RBL blacklists.'
+	echo 'graph_category mail'
+	echo 'graph_period second'
+	echo 'unlisted.min 0'
+	echo 'unlisted.label Unlisted on any RBL'
+	echo 'unlisted.draw AREA'
+	echo 'unlisted.colour 44FF44'
+	echo 'listed.min 0'
+	echo 'listed.label Listed on any RBL'
+	echo 'listed.draw STACK'
+	echo 'listed.colour FF0000'
+	echo 'totallist.label Total RBL listings'
+	echo 'totallist.min 0'
+	echo 'totallist.colour AAAA00'
+	exit 0
+fi
+
+UNLISTED=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | grep '^0$' -c`
+LISTED=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | grep '^0$' -vc`
+TOTALLIST=`cat /etc/postfix/bin/bldb.dat | cut -d ' ' -f 2 | awk '{s+=$1}END{print s}'`
+echo unlisted.value $UNLISTED
+echo listed.value $LISTED
+echo totallist.value $TOTALLIST
